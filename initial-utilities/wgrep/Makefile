@@ -1,10 +1,10 @@
 CFLAGS = -Wall -Werror
-OBJS = wcat.o
+OBJS = wgrep.o
 
-all: wcat
+all: wgrep
 
 wcat: $(OBJS)
 	$(CC) $(CFLAGS) $^ -o $@
 
 clean:
-	rm -f $(OBJS) wcat
+	rm -f $(OBJS) wgrep
