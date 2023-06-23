@@ -5,17 +5,26 @@
 
 int main(int argc, char *argv[]){
   if (argc < 2) {
-        printf("Insufficient arguments. Usage: %s arg1 \n", argv[0]);
-        return 1;
+        return 0;
     }
-  FILE *fp = fopen(argv[1], "r");
-  if (fp == NULL) {
-    printf("cannot open file\n");
-    exit(1);
+  for(int i = 1; i < argc; i++){
+    FILE *fp = fopen(argv[i], "r");
+    if (fp == NULL) {
+      printf("wcat: cannot open file\n");
+     
+      exit(1);
+    }
+    //keep reading until reading end of file
+    char buffer[256];
+    while (fgets(buffer, sizeof(buffer), fp)){
+      printf("%s", buffer);
+    } 
+
+    
+    if (fclose(fp) != 0){
+      printf("error during file close");
+      exit(0);
+    }
   }
-  char buffer[256];
-  fgets(buffer, sizeof(buffer), fp);
-  printf("%s", buffer);
-  fclose(fp);
   return 0;
 }
