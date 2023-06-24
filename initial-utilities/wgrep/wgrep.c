@@ -70,53 +70,69 @@ int main(int argc, char *argv[]){
 
   //handle use syntax
   if(argc < 2){
-    printf("wgrep: searchterm [file ...]");
+    printf("wgrep: searchterm [file ...]\n");
     exit(1);
   }
   
   char *searchTerm = argv[1];
   size_t termSize = strlen(searchTerm);
   int *patternLPS = malloc(termSize);
-  computeLPS(searchTerm, patternLPS);
-  for(int i = 0; i < termSize; i++){
-    printf("%d", patternLPS[i]);
-  }
-
-  if(argc == 2){
-    // take input from standard input
-
-    
-  }
   
-  // else has correct arguments
+  computeLPS(searchTerm, patternLPS);
+
   char *buf = NULL;
   size_t bufSize = 0;
   ssize_t bytesRead = 0;
-  for(int i = 2; i < argc; i++){
-    FILE *fp = fopen(argv[i], "r");
-    // getline allocates data dynamically for &buf
-    while ( (bytesRead = getline(&buf, &bufSize, fp)) != -1 ){
-      // do the pattern search here
-      printf("line #: %s", buf);
-      // print if pattern matches
-      if(searchPattern(buf, searchTerm) >= 0){
-	//print the line with match
-	printf("%s", buf);
-      }else{
-	// not found, do nothing
+  
+  if(argc == 2){
+    // take input from standard input
+     while ( (bytesRead = getline(&buf, &bufSize, stdin)) != -1 ){
+	// do the pattern search here
+	if(searchPattern(buf, searchTerm) >= 0){
+	  //print the line with match
+	  printf("%s", buf);
+	}else{
+	  // not found, do nothing
+	}
+      }
+    if(searchPattern(buf, searchTerm) >= 0){
+      //print the line with match
+      printf("%s", buf);
+    }else{
+      // not found, do nothing
+    }
+  }else{
+    
+    
+    
+    for(int i = 2; i < argc; i++){
+      FILE *fp = fopen(argv[i], "r");
+      if (fp == NULL) { //file does not exist
+	printf("wgrep: cannot open file\n");
+	exit(1);
+      }
+      // getline allocates data dynamically for &buf
+      while ( (bytesRead = getline(&buf, &bufSize, fp)) != -1 ){
+	// do the pattern search here
+	if(searchPattern(buf, searchTerm) >= 0){
+	  //print the line with match
+	  printf("%s", buf);
+	}else{
+	  // not found, do nothing
+	}
+      }
+      
+      
+      
+      if (fclose(fp) != 0){
+	printf("error during file close");
+	return 0;
+	exit(0);
       }
     }
-    
-
-    
-    if (fclose(fp) != 0){
-      printf("error during file close");
-      exit(0);
-    }
   }
-
   free(patternLPS);
   free(buf);
   
-  
+  return 0;
 }
